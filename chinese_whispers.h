@@ -20,6 +20,8 @@ namespace dlib
 		int get_random_64bit_number() const { return ::rand(); }
 	};
 
+// max_index_plus_one, find_neighbor_ranges 来自"dlib/edge_list_graphs.h"
+
 // ----------------------------------------------------------------------------------------
 
 	int max_index_plus_one(const std::vector<ordered_sample_pair>& pairs)
@@ -100,6 +102,8 @@ namespace dlib
 				out_edges.push_back(ordered_sample_pair(edges[i].index2(), edges[i].index1(), edges[i].distance()));
 		}
 	}
+
+// 以下代码来自"dlib/chinese_whispers.h"
 
 // ----------------------------------------------------------------------------------------
 

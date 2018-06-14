@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
 	t = clock() - t;
 	std::cout << "element num: " << size << ", using time: " << t << "ms\n";
 	std::cout << "number of clusters: "<< num_clusters << "\n";
+	if (size <= 2048)
 	for (int cluster_id = 0; cluster_id < num_clusters; ++cluster_id)
 	{
 		std::cout << "cluster " << cluster_id << ": ";

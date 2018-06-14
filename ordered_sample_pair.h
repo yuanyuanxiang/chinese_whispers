@@ -5,6 +5,8 @@
 
 #include <limits>
 
+// ´úÂëÀ´×Ô"dlib/ordered_sample_pair.h"
+
 namespace dlib
 {
 
@@ -77,6 +79,47 @@ namespace dlib
 
 // ----------------------------------------------------------------------------------------
 
+#ifdef SERIALIZE
+    inline void serialize (
+        const ordered_sample_pair& item,
+        std::ostream& out
+    )
+    {
+        try
+        {
+            serialize(item.index1(),out);
+            serialize(item.index2(),out);
+            serialize(item.distance(),out);
+        }
+        catch (serialization_error& e)
+        { 
+            throw serialization_error(e.info + "\n   while serializing object of type ordered_sample_pair"); 
+        }
+    }
+
+    inline void deserialize (
+        ordered_sample_pair& item,
+        std::istream& in 
+    )
+    {
+        try
+        {
+            unsigned long idx1, idx2;
+            double dist;
+
+            deserialize(idx1,in);
+            deserialize(idx2,in);
+            deserialize(dist,in);
+            item = ordered_sample_pair(idx1, idx2, dist);
+        }
+        catch (serialization_error& e)
+        { 
+            throw serialization_error(e.info + "\n   while deserializing object of type ordered_sample_pair"); 
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+#endif
 }
 
 #endif // DLIB_ORDERED_SAMPLE_PaIR_Hh_
