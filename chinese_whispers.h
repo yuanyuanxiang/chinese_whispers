@@ -9,7 +9,19 @@
 #include "ordered_sample_pair.h"
 #include <algorithm>
 #include <ctime>
+#include <assert.h>
+#include "config.h"
 #define DLIB_ASSERT(p1, p2)
+
+#if USING_STL
+#define ARRAY std::vector
+#define MAP std::map
+#else
+#define ARRAY Array
+#define MAP Map
+#endif
+
+#define SAFE_DELETE_ARRAY(p) if (p) { delete [] (p); (p) = NULL; }
 
 namespace dlib
 {
@@ -20,11 +32,77 @@ namespace dlib
 		int get_random_64bit_number() const { return ::rand(); }
 	};
 
+	/* Array - 替代vector */
+	template <typename T>
+	class Array
+	{
+	private:
+		unsigned m_capacity;		// 最大元素数
+		unsigned m_size;			// 当前元素数
+		T *data;					// 数据存储区
+	public:
+		Array(unsigned s = 0) : m_capacity(s), m_size(0), data(s ? new T[s] : 0) { }
+		~Array() { clear(); }
+		unsigned size() const { return m_size; }
+		unsigned capacity() const { return m_capacity; }
+		void clear() { SAFE_DELETE_ARRAY(data); memset(this, 0, sizeof(*this)); }
+		void reserve(unsigned s) { if(s > m_capacity) change(s); }// 预分配内存
+		const T& operator[](unsigned index) const { return *(data + index); }
+		T& operator[](unsigned index) { return *(data + index); }
+		T* begin() const { return data; }
+		T* end() const { return data + m_size; }
+		void push_back(const T &e){if(m_size==m_capacity) change(1.5*m_capacity); *(data+m_size)=e; ++m_size;}
+		void resize(unsigned s) { if(s < m_size) m_size = s; else if(s > m_capacity){change(s); m_size = s;} }
+		void assign(unsigned s, const T &e) { change(1.5 * s); for(int i = 0; i < s; ++i) push_back(e); }
+	private:
+		void change(unsigned s)// 改变数组容量
+		{
+			T *buf = new T[m_capacity = s];
+			m_size = std::min(m_size, m_capacity);
+			if (data) memcpy(buf, data, m_size * sizeof(T));
+			SAFE_DELETE_ARRAY(data);
+			data = buf;
+		}
+	};
+
+	/* Map - 替代map */
+	template <typename Idx, typename Val>
+	class Map
+	{
+	private:
+		unsigned m_capacity;			// 最大索引号
+		std::pair<Idx, Val> *data;		// 索引与值映射表
+	public:
+		Map(unsigned s = 0) : m_capacity(s), data(s ? new std::pair<Idx, Val>[s] : 0)
+		{
+			for (int i = 0; i < m_capacity; ++i)
+				(data + i)->first = i;
+		}
+		~Map() { SAFE_DELETE_ARRAY(data); }
+		void reserve(unsigned s) { if(s > m_capacity) change(s); }// 预分配内存
+		const Val& operator[](Idx index) const { if(index>=m_capacity) change(1.5*(index+1)); return (data + index)->second; }
+		Val& operator[](Idx index) { if(index>=m_capacity) change(1.5*(index+1)); return (data + index)->second; }
+
+		typedef typename std::pair<Idx, Val>* iterator;
+		iterator begin() const { return data; }
+		iterator end() const { return data + m_capacity; }
+	private:
+		void change(unsigned s)// 改变数组容量
+		{
+			std::pair<Idx, Val> *buf = new std::pair<Idx, Val>[s];
+			if (data) memcpy(buf, data, m_capacity * sizeof(std::pair<Idx, Val>));
+			for (int i = m_capacity; i < s; ++i) (buf + i)->first = i;
+			SAFE_DELETE_ARRAY(data);
+			data = buf;
+			m_capacity = s;
+		}
+	};
+
 // max_index_plus_one, find_neighbor_ranges 来自"dlib/edge_list_graphs.h"
 
 // ----------------------------------------------------------------------------------------
 
-	int max_index_plus_one(const std::vector<ordered_sample_pair>& pairs)
+	int max_index_plus_one(const ARRAY<ordered_sample_pair>& pairs)
 	{
 		if (pairs.size() == 0)
 		{
@@ -47,13 +125,9 @@ namespace dlib
 
 // ----------------------------------------------------------------------------------------
 
-	template <
-		typename alloc1, 
-		typename alloc2
-	>
 	void find_neighbor_ranges (
-	const std::vector<ordered_sample_pair,alloc1>& edges,
-	std::vector<std::pair<unsigned long, unsigned long>,alloc2>& neighbors
+	const ARRAY<ordered_sample_pair>& edges,
+	ARRAY<std::pair<unsigned long, unsigned long>>& neighbors
 	)
 	{
 		// make sure requires clause is not broken
@@ -84,13 +158,9 @@ namespace dlib
 
 // ----------------------------------------------------------------------------------------
 
-	template <
-		typename alloc1, 
-		typename alloc2
-	>
 	void convert_unordered_to_ordered (
-	const std::vector<sample_pair,alloc1>& edges,
-	std::vector<ordered_sample_pair,alloc2>& out_edges
+	const ARRAY<sample_pair>& edges,
+	ARRAY<ordered_sample_pair>& out_edges
 	)
 	{
 		out_edges.clear();
@@ -108,8 +178,8 @@ namespace dlib
 // ----------------------------------------------------------------------------------------
 
     inline unsigned long chinese_whispers (
-        const std::vector<ordered_sample_pair>& edges,
-        std::vector<unsigned long>& labels,
+        const ARRAY<ordered_sample_pair>& edges,
+        ARRAY<unsigned long>& labels,
         const unsigned long num_iterations,
         dlib::rand& rnd
     )
@@ -124,7 +194,7 @@ namespace dlib
         if (edges.size() == 0)
             return 0;
 
-        std::vector<std::pair<unsigned long, unsigned long> > neighbors;
+        ARRAY<std::pair<unsigned long, unsigned long> > neighbors;
         find_neighbor_ranges(edges, neighbors);
 
         // Initialize the labels, each node gets a different label.
@@ -139,7 +209,10 @@ namespace dlib
             const unsigned long idx = rnd.get_random_64bit_number()%neighbors.size();
 
             // Count how many times each label happens amongst our neighbors.
-            std::map<unsigned long, double> labels_to_counts;
+            MAP<unsigned long, double> labels_to_counts;
+#if !USING_STL
+			labels_to_counts.reserve(labels.size());
+#endif
             const unsigned long end = neighbors[idx].second;
             for (unsigned long i = neighbors[idx].first; i != end; ++i)
             {
@@ -147,7 +220,7 @@ namespace dlib
             }
 
             // find the most common label
-            std::map<unsigned long, double>::iterator i;
+            MAP<unsigned long, double>::iterator i;
             double best_score = -std::numeric_limits<double>::infinity();
             unsigned long best_label = labels[idx];
             for (i = labels_to_counts.begin(); i != labels_to_counts.end(); ++i)
@@ -184,13 +257,13 @@ namespace dlib
 // ----------------------------------------------------------------------------------------
 
     inline unsigned long chinese_whispers (
-        const std::vector<sample_pair>& edges,
-        std::vector<unsigned long>& labels,
+        const ARRAY<sample_pair>& edges,
+        ARRAY<unsigned long>& labels,
         const unsigned long num_iterations,
         dlib::rand& rnd
     )
     {
-        std::vector<ordered_sample_pair> oedges;
+        ARRAY<ordered_sample_pair> oedges;
         convert_unordered_to_ordered(edges, oedges);
         std::sort(oedges.begin(), oedges.end(), &order_by_index<ordered_sample_pair>);
 
@@ -200,8 +273,8 @@ namespace dlib
 // ----------------------------------------------------------------------------------------
 
     inline unsigned long chinese_whispers (
-        const std::vector<sample_pair>& edges,
-        std::vector<unsigned long>& labels,
+        const ARRAY<sample_pair>& edges,
+        ARRAY<unsigned long>& labels,
         const unsigned long num_iterations = 100
     )
     {
@@ -212,8 +285,8 @@ namespace dlib
 // ----------------------------------------------------------------------------------------
 
     inline unsigned long chinese_whispers (
-        const std::vector<ordered_sample_pair>& edges,
-        std::vector<unsigned long>& labels,
+        const ARRAY<ordered_sample_pair>& edges,
+        ARRAY<unsigned long>& labels,
         const unsigned long num_iterations = 100
     )
     {

@@ -3,16 +3,22 @@
 #include <iostream>
 using namespace dlib;
 
+#ifdef _DEBUG
+const int K = 512;
+#else 
+const int K = 10000;
+#endif
+
 // 随机生成一些浮点数据，对CW算法进行测试
 int main(int argc, char *argv[])
 {
-	const int size = 1 == argc ? 512 : std::max(atoi(argv[1]), 10);
+	const int size = 1 == argc ? K : std::max(atoi(argv[1]), 10);
 	double *data = new double[size];
 	srand(time(NULL));
 	for (int i = 0; i < size; ++i)
 		data[i] = 10.0 * ::rand() / RAND_MAX;
 	clock_t t = clock();
-	std::vector<sample_pair> edges;
+	ARRAY<sample_pair> edges(USING_STL ? 0 : size * size / 16);
 	for (int i = 0; i < size; ++i)
 	{
 		for (int j = i; j < size; ++j)
@@ -21,7 +27,7 @@ int main(int argc, char *argv[])
 				edges.push_back(sample_pair(i, j));
 		}
 	}
-	std::vector<unsigned long> labels;
+	ARRAY<unsigned long> labels;
 	const int num_clusters = chinese_whispers(edges, labels);
 	t = clock() - t;
 	std::cout << "element num: " << size << ", using time: " << t << "ms\n";

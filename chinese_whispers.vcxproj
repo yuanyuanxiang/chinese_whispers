@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="chinese_whispers.h" />
+    <ClInclude Include="config.h" />
     <ClInclude Include="ordered_sample_pair.h" />
     <ClInclude Include="sample_pair.h" />
   </ItemGroup>

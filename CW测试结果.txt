@@ -1,0 +1,29 @@
+1.测试结果（Release）：
+
+ARRAY, std::map: element num: 10000, using time: 378229ms
+
+VECTOR: element num: 10000, using time: 1155963ms
+
+加速：3.06倍
+
+ARRAY, MAP: element num: 10000, using time: 46197ms
+
+加速：25.02倍
+
+2.测试结果（直接运行）：
+
+VECTOR: element num: 10000, using time: 13702ms
+
+ARRAY, MAP: element num: 10000, using time: 11872ms
+
+使用STL
+element num: 40000, using time: 692556ms
+number of clusters: 7239
+
+不使用STL
+element num: 40000, using time: 565009ms
+number of clusters: 7239
+
+结论：调试模式的结果不具有对比价值，STL中的容器若使用得当，效率会很高。
+
+2018-6-25
