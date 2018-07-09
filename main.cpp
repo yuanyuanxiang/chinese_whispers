@@ -1,7 +1,4 @@
-#include "chinese_whispers.h"
-#include "sample_pair.h"
-#include <iostream>
-using namespace dlib;
+#include "faces_classify.h"
 
 #ifdef _DEBUG
 const int K = 512;
@@ -10,7 +7,7 @@ const int K = 10000;
 #endif
 
 // 随机生成一些浮点数据，对CW算法进行测试
-int main(int argc, char *argv[])
+int test(int argc, char *argv[])
 {
 	const int size = 1 == argc ? K : std::max(atoi(argv[1]), 10);
 	double *data = new double[size];
@@ -46,5 +43,17 @@ int main(int argc, char *argv[])
 
 	system("PAUSE");
 	delete [] data;
+	return 0;
+}
+
+
+int main(int argc, char *argv[])
+{
+	faces_classify fc;
+	fc.load("face.db");
+	fc.CW();
+	fc.clear();
+	system("PAUSE");
+
 	return 0;
 }

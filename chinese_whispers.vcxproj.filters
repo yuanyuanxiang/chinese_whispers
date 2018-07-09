@@ -13,9 +13,27 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="cppsqlite3">
+      <UniqueIdentifier>{97edce3c-9149-44ca-974e-40cf1a7ac15b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="faces_classify.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="cppsqlite3\CppSQLite3.cpp">
+      <Filter>cppsqlite3</Filter>
+    </ClCompile>
+    <ClCompile Include="cppsqlite3\shell.c">
+      <Filter>cppsqlite3</Filter>
+    </ClCompile>
+    <ClCompile Include="cppsqlite3\sqlite3.c">
+      <Filter>cppsqlite3</Filter>
+    </ClCompile>
+    <ClCompile Include="StrTransfer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,5 +50,31 @@
     <ClInclude Include="config.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="faces_classify.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="cppsqlite3\CppSQLite3.h">
+      <Filter>cppsqlite3</Filter>
+    </ClInclude>
+    <ClInclude Include="cppsqlite3\sqlite3.h">
+      <Filter>cppsqlite3</Filter>
+    </ClInclude>
+    <ClInclude Include="cppsqlite3\sqlite3ext.h">
+      <Filter>cppsqlite3</Filter>
+    </ClInclude>
+    <ClInclude Include="mString.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StrTransfer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="cppsqlite3\ReadMe.txt">
+      <Filter>cppsqlite3</Filter>
+    </Text>
   </ItemGroup>
 </Project>

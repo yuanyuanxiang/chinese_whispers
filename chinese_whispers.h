@@ -58,7 +58,7 @@ namespace dlib
 		void change(unsigned s)// 改变数组容量
 		{
 			T *buf = new T[m_capacity = s];
-			m_size = std::min(m_size, m_capacity);
+			m_size = m_size < m_capacity ? m_size : m_capacity;
 			if (data) memcpy(buf, data, m_size * sizeof(T));
 			SAFE_DELETE_ARRAY(data);
 			data = buf;
@@ -102,7 +102,7 @@ namespace dlib
 
 // ----------------------------------------------------------------------------------------
 
-	int max_index_plus_one(const ARRAY<ordered_sample_pair>& pairs)
+	inline int max_index_plus_one(const ARRAY<ordered_sample_pair>& pairs)
 	{
 		if (pairs.size() == 0)
 		{
@@ -125,7 +125,7 @@ namespace dlib
 
 // ----------------------------------------------------------------------------------------
 
-	void find_neighbor_ranges (
+	inline void find_neighbor_ranges (
 	const ARRAY<ordered_sample_pair>& edges,
 	ARRAY<std::pair<unsigned long, unsigned long>>& neighbors
 	)
@@ -158,7 +158,7 @@ namespace dlib
 
 // ----------------------------------------------------------------------------------------
 
-	void convert_unordered_to_ordered (
+	inline void convert_unordered_to_ordered (
 	const ARRAY<sample_pair>& edges,
 	ARRAY<ordered_sample_pair>& out_edges
 	)
