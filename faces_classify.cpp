@@ -21,7 +21,10 @@ faces_classify::~faces_classify(void)
 void faces_classify::load(const char *db)
 {
 	if (-1 == _access(db, 0))
+	{
+		printf("数据库文件\"%s\"不存在!\n", db);
 		return;
+	}
 	NAMES::db_handle* m_pDatabase = new NAMES::db_sqlite(db);
 	if (m_pDatabase->open() && m_pDatabase->sql_select("select * from faceInfo;"))
 	{
@@ -57,10 +60,16 @@ void faces_classify::clear()
 }
 
 
-void faces_classify::CW()
+void faces_classify::CW(const char *src)
 {
 	if (0 == num || NULL == data)
 		return;
+	if (-1 == _access(src, 0))
+	{
+		printf("图片目录\"%s\"不存在!\n", src);
+		return;
+	}
+	m_folder = src;
 
 	ARRAY<sample_pair> edges(USING_STL ? 0 : num * num / 16);
 	for (int i = 0; i < num; ++i)
@@ -88,6 +97,7 @@ void faces_classify::CW()
 		}
 		std::cout << count[cluster_id] << "个。\n";
 	}
+	delete [] count;
 }
 
 
@@ -101,7 +111,7 @@ void faces_classify::save(int index, int class_id)
 	sprintf_s(dir, "classify/%d", class_id);
 	_mkdir("classify");
 	_mkdir(dir);
-	sprintf_s(src, "face/%s", path.c_str());
+	sprintf_s(src, "%s/%s", m_folder.c_str(), path.c_str());
 	sprintf_s(dst, "%s/%s", dir, path.c_str());
 	if (FALSE == CopyFile(src, dst, TRUE))
 		TRACE("CopyFile %s failed.\n", path.c_str());

@@ -44,5 +44,5 @@ public:
 	// 情空结果
 	void clear();
 	// 运行CW分类算法
-	void CW();
+	void CW(const char *src);
 };

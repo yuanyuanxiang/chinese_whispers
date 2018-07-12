@@ -5,8 +5,13 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommandArguments>512</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>face.db face</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <RemoteDebuggerCommand>C:\Users\tensorflow\Desktop\faceViewer\chinese_whispers.exe</RemoteDebuggerCommand>
+    <RemoteDebuggerWorkingDirectory>C:\Users\tensorflow\Desktop\faceViewer</RemoteDebuggerWorkingDirectory>
+    <RemoteDebuggerServerName>192.168.12.120</RemoteDebuggerServerName>
+    <DeploymentDirectory>C:\Users\tensorflow\Desktop\faceViewer</DeploymentDirectory>
+    <AdditionalFiles>$(TargetDir)\chinese_whispers.pdb</AdditionalFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerCommandArguments>512</LocalDebuggerCommandArguments>
