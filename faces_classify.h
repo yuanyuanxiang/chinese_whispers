@@ -4,17 +4,27 @@
 #include "chinese_whispers.h"
 using namespace dlib;
 
-// 人脸特征向量
-class facevec
+template<typename T, int dim>
+class Vec
 {
 public:
-	cv::Vec<double, 512> data;
-	friend inline double operator-(const facevec &v1, const facevec &v2)
-	{
-		double s = cv::norm(v1.data - v2.data, CV_L2);
-		return s;
+	Vec(){ }
+	~Vec(){ }
+	friend T distance(const Vec &v1, const Vec &v2) {
+		T s = 0;
+		for (int i=0; i<dim; ++i)
+		{
+			T t = v1.data[i] - v2.data[i];
+			s += t*t;
+		}
+		return sqrt(s);
 	}
+
+	T data[dim];
 };
+
+// 人脸特征向量
+typedef Vec<double, 512> facevec;
 
 
 /**
@@ -41,8 +51,8 @@ public:
 	~faces_classify(void);
 	// 加载数据库
 	void load(const char *db);
-	// 情空结果
+	// 清空结果
 	void clear();
 	// 运行CW分类算法
-	void CW(const char *src);
+	void CW(const char *src, double threshold = 0.6);
 };

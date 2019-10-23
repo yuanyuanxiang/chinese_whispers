@@ -60,7 +60,7 @@ void faces_classify::clear()
 }
 
 
-void faces_classify::CW(const char *src)
+void faces_classify::CW(const char *src, double threshold)
 {
 	if (0 == num || NULL == data)
 		return;
@@ -76,8 +76,8 @@ void faces_classify::CW(const char *src)
 	{
 		for (int j = i; j < num; ++j)
 		{
-			double d = i == j ? 0 : data[j] - data[i];
-			if (d < 0.6) edges.push_back(sample_pair(i, j));
+			double d = i == j ? 0 : distance(data[j], data[i]);
+			if (d < threshold) edges.push_back(sample_pair(i, j));
 		}
 	}
 	ARRAY<unsigned long> labels;

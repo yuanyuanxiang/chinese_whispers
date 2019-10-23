@@ -16,6 +16,9 @@
     <Filter Include="cppsqlite3">
       <UniqueIdentifier>{97edce3c-9149-44ca-974e-40cf1a7ac15b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dlib">
+      <UniqueIdentifier>{09753efa-9292-40d8-9cb5-9f41372c8ddc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -38,15 +41,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="chinese_whispers.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ordered_sample_pair.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="sample_pair.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="config.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -70,6 +64,15 @@
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="chinese_whispers.h">
+      <Filter>dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="ordered_sample_pair.h">
+      <Filter>dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="sample_pair.h">
+      <Filter>dlib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
